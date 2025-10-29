@@ -24,6 +24,12 @@ header h1 {
   letter-spacing: -0.5px;
 }
 
+header p {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
 /* 네비게이션 */
 nav {
   margin-top: 15px;
@@ -47,6 +53,12 @@ nav {
   color: white;
 }
 
+.tab-btn.active {
+  background: #6a85b6;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
 /* 활성 탭 */
 .tab.active {
   display: block;
@@ -58,7 +70,7 @@ nav {
   margin: 40px auto;
   width: 85%;
   max-width: 800px;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.9);
   border-radius: 25px;
   padding: 30px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.08);
@@ -69,12 +81,38 @@ nav {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* 컨트롤 패널 */
+.control-panel {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f0f4f8;
+  border-radius: 15px;
+}
+
+.control-panel label {
+  display: block;
+  margin: 10px 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.control-panel input[type="range"] {
+  width: 80%;
+  margin: 10px 0;
+}
+
 /* 슬라이더 + 풍선 */
 .balloon {
   margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 180px;
 }
+
 .balloon svg {
   transition: transform 0.5s ease, fill 0.5s ease;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
 }
 
 /* 그래프 */
@@ -82,6 +120,7 @@ canvas {
   width: 100%;
   max-height: 300px;
   margin-top: 20px;
+  border-radius: 10px;
 }
 
 /* 퀴즈 섹션 */
@@ -90,11 +129,20 @@ canvas {
   margin-top: 20px;
 }
 
-#quizBox h3 {
-  background: #e8efff;
-  padding: 10px 15px;
+.quiz-card {
+  background: #f9fbff;
+  padding: 20px;
   border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.quiz-card h3 {
+  background: #e8efff;
+  padding: 12px 15px;
+  border-radius: 12px;
   font-size: 1.1rem;
+  margin: 0 0 15px 0;
+  color: #333;
 }
 
 .optionBtn {
@@ -103,16 +151,19 @@ canvas {
   margin: 8px 0;
   padding: 12px;
   border-radius: 12px;
-  border: none;
-  background: #f9f9f9;
+  border: 2px solid transparent;
+  background: #ffffff;
   cursor: pointer;
   font-size: 1rem;
   text-align: left;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .optionBtn:hover {
   background: #e6f0ff;
+  border-color: #6a85b6;
+  transform: translateX(5px);
 }
 
 #nextBtn {
@@ -127,25 +178,26 @@ canvas {
   transition: 0.3s;
 }
 
-#nextBtn:hover {
+#nextBtn:hover:not(:disabled) {
   background: #4f6aa3;
+  transform: scale(1.05);
+}
+
+#nextBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 #feedback {
   font-weight: bold;
   margin-top: 15px;
+  font-size: 1.1rem;
+  padding: 10px;
+  border-radius: 10px;
 }
 
-/* 푸터 */
-footer {
-  margin-top: 40px;
-  padding: 15px;
-  font-size: 0.9rem;
-  color: #555;
-  opacity: 0.8;
-}
-
-#saveExcelBtn {
+/* 저장 버튼 */
+#saveExcelBtn, #saveExcelBtn2 {
   margin-top: 20px;
   background: linear-gradient(90deg, #6a85b6, #bac8e0);
   color: white;
@@ -156,15 +208,21 @@ footer {
   font-weight: 600;
   cursor: pointer;
   transition: 0.3s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-#saveExcelBtn:hover {
+#saveExcelBtn:hover, #saveExcelBtn2:hover {
   transform: scale(1.05);
   background: linear-gradient(90deg, #5a75a0, #9eb6d6);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
+/* 결과 섹션 */
 #resultSection {
   margin-top: 30px;
+  padding: 20px;
+  background: #f9fbff;
+  border-radius: 15px;
 }
 
 #saveResultBtn {
@@ -176,7 +234,19 @@ footer {
   padding: 10px 20px;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.3s;
 }
+
 #saveResultBtn:hover {
   background: linear-gradient(90deg, #5a75a0, #9eb6d6);
+  transform: scale(1.05);
+}
+
+/* 푸터 */
+footer {
+  margin-top: 40px;
+  padding: 15px;
+  font-size: 0.9rem;
+  color: #555;
+  opacity: 0.8;
 }

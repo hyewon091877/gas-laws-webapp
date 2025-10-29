@@ -4,7 +4,12 @@ const tabs = document.querySelectorAll('.tab');
 
 tabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
+    // 모든 탭 버튼과 탭 비활성화
+    tabButtons.forEach(b => b.classList.remove('active'));
     tabs.forEach(t => t.classList.remove('active'));
+    
+    // 선택한 탭만 활성화
+    btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
   });
 });
@@ -19,8 +24,26 @@ const boyleConst = 100;
 const ctx1 = document.getElementById('boyleChart').getContext('2d');
 const boyleChart = new Chart(ctx1, {
   type: 'line',
-  data: { labels: [], datasets: [{ label: 'P vs V', data: [], borderColor: '#007bff' }] },
-  options: { scales: { x: { title: { display: true, text: '압력 (atm)' } }, y: { title: { display: true, text: '부피 (L)' } } } }
+  data: { 
+    labels: [], 
+    datasets: [{ 
+      label: '압력 vs 부피', 
+      data: [], 
+      borderColor: '#007bff',
+      backgroundColor: 'rgba(0, 123, 255, 0.1)',
+      tension: 0.4
+    }] 
+  },
+  options: { 
+    responsive: true,
+    scales: { 
+      x: { title: { display: true, text: '압력 (atm)' } }, 
+      y: { title: { display: true, text: '부피 (L)' } } 
+    },
+    plugins: {
+      legend: { display: false }
+    }
+  }
 });
 
 pSlider.addEventListener('input', () => {
@@ -28,10 +51,13 @@ pSlider.addEventListener('input', () => {
   const V = boyleConst / P;
   pValue.textContent = P.toFixed(1);
   vValue.textContent = V.toFixed(1);
+  
+  // 풍선 크기 조절
   boyleBalloon.style.transform = `scale(${V / 100})`;
   boyleBalloon.style.transformOrigin = 'center center';
 
-  boyleChart.data.labels.push(P);
+  // 그래프 업데이트
+  boyleChart.data.labels.push(P.toFixed(1));
   boyleChart.data.datasets[0].data.push(V);
   recordBoyleData(P, V);
   boyleChart.update();
@@ -55,10 +81,13 @@ const charleChart = new Chart(ctx2, {
       label: '온도(°C) vs 부피(L)',
       data: [], 
       borderColor: '#ff6600',
-      borderWidth: 2 
+      backgroundColor: 'rgba(255, 102, 0, 0.1)',
+      borderWidth: 2,
+      tension: 0.4
     }] 
   },
   options: { 
+    responsive: true,
     scales: { 
       x: { title: { display: true, text: '온도 (°C)' } }, 
       y: { title: { display: true, text: '부피 (L)' } } 
@@ -74,27 +103,24 @@ tSlider.addEventListener('input', () => {
   const V = V0 * (1 + t / 273);         // 샤를의 법칙 실제 계산식
   tValue.textContent = t;
   vCharle.textContent = V.toFixed(1);
+  
   // 풍선 크기 조절
   charleBalloon.style.transform = `scale(${V / V0})`;
   charleBalloon.style.transformOrigin = 'center center';
-  // 풍선 색상 변경
+  
+  // 풍선 색상 변경 (0°C 파랑 → 100°C 빨강)
   const ellipse = charleBalloon.querySelector('ellipse');
-  // 온도에 따라 RGB 색상 변화 (0°C 파랑, 100°C 빨강)
-  const r = Math.round(255 * (t / 100));       // 빨강 비율 증가
-  const g = Math.round(200 * (1 - t / 100)); // 녹색 감소
-  const b = Math.round(255 * (1 - t / 100));   // 파랑 비율 감소
+  const r = Math.round(255 * (t / 100));
+  const g = Math.round(200 * (1 - t / 100));
+  const b = Math.round(255 * (1 - t / 100));
   ellipse.setAttribute('fill', `rgb(${r},${g},${b})`);
+  
   // 그래프 업데이트
   charleChart.data.labels.push(t);
   charleChart.data.datasets[0].data.push(V);
-  recordCharleData(T, V);
+  recordCharleData(t, V);  // ✅ 수정: T → t
   charleChart.update();
 });
-
-// 🔹 퀴즈 기능
-const quizBox = document.getElementById('quizBox');
-const feedback = document.getElementById('feedback');
-const nextBtn = document.getElementById('nextBtn');
 
 // ----------------------------
 // 🎯 평가용 퀴즈 데이터 (15문항)
@@ -107,7 +133,7 @@ const allQuestions = [
   { question: "V∝T 은 어떤 법칙?", options: ["샤를의 법칙", "보일의 법칙", "아보가드로 법칙", "달톤의 법칙"], answer: 0 },
   { question: "기체 압력이 일정할 때 부피는 온도에?", options: ["반비례", "비례", "무관", "감소"], answer: 1 },
   { question: "보일의 법칙에서 P가 3배면 V는?", options: ["3배", "1/3배", "2배", "변화 없음"], answer: 1 },
-  { question: "샤를의 법칙에서 온도 0°C일 때 부피는?", options: ["0이 된다", "일정", "무한대", "줄어들다 멈춤"], answer: 0 },
+  { question: "샤를의 법칙에서 온도가 증가하면 부피는?", options: ["감소한다", "증가한다", "변화없음", "0이 된다"], answer: 1 },
   { question: "기체 압력 단위는?", options: ["℃", "L", "Pa", "g"], answer: 2 },
   { question: "온도 단위 변환시 절대온도는?", options: ["T=℃", "T=℃+273", "T=℃-273", "T=273-℃"], answer: 1 },
   { question: "보일의 법칙 실험에서 주로 사용하는 기구는?", options: ["유리관", "피스톤 실린더", "온도계", "비커"], answer: 1 },
@@ -153,8 +179,11 @@ function checkAnswer(selected) {
     feedback.style.color = "#2d7a2d";
 
     resultData.push({ question: currentQuiz + 1, tries: attempts[currentQuiz] });
+    
+    // 정답 맞추면 다음 버튼 활성화
+    document.getElementById('nextBtn').disabled = false;
   } else {
-    feedback.textContent = "틀렸어요! 다시 도전해봐요 💪";
+    feedback.textContent = "❌ 틀렸어요! 다시 도전해봐요 💪";
     feedback.style.color = "#c0392b";
   }
 }
@@ -163,14 +192,16 @@ document.getElementById('nextBtn').addEventListener('click', () => {
   if (currentQuiz < quizData.length - 1) {
     currentQuiz++;
     showQuiz();
+    document.getElementById('nextBtn').disabled = true;
   } else {
     showResultChart();
   }
 });
 
 function showResultChart() {
-  document.getElementById('quizBox').innerHTML = "<h3>모든 문제를 완료했습니다 👏</h3>";
+  document.getElementById('quizBox').innerHTML = "<h3>🎉 모든 문제를 완료했습니다!</h3>";
   document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('feedback').style.display = 'none';
   document.getElementById('resultSection').style.display = 'block';
 
   const ctx = document.getElementById('resultChart').getContext('2d');
@@ -186,6 +217,7 @@ function showResultChart() {
       }]
     },
     options: {
+      responsive: true,
       scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
       plugins: { legend: { display: false } }
     }
@@ -222,34 +254,35 @@ document.getElementById("saveResultBtn").addEventListener("click", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   showQuiz(); // 첫 문제 자동 표시
+  document.getElementById('nextBtn').disabled = true; // 정답 맞추기 전까지 비활성화
 });
 
 // -------------------------------
-// 🧪 실험 결과 저장 기능 추가
+// 🧪 실험 결과 저장 기능
 // -------------------------------
 let results = [];
 
 function recordBoyleData(P, V) {
   results.push({
-    law: "Boyle",
-    pressure: P,
-    volume: V,
+    law: "보일의 법칙",
+    pressure: P.toFixed(2),
+    volume: V.toFixed(2),
     timestamp: new Date().toLocaleTimeString()
   });
 }
 
 function recordCharleData(T, V) {
   results.push({
-    law: "Charles",
+    law: "샤를의 법칙",
     temperature: T,
-    volume: V,
+    volume: V.toFixed(2),
     timestamp: new Date().toLocaleTimeString()
   });
 }
 
 function exportToExcel() {
   if (results.length === 0) {
-    alert("저장된 데이터가 없습니다!");
+    alert("⚠️ 저장된 실험 데이터가 없습니다! 슬라이더를 움직여 실험을 먼저 해보세요.");
     return;
   }
 
@@ -258,4 +291,5 @@ function exportToExcel() {
   XLSX.utils.book_append_sheet(wb, ws, "Experiment Results");
 
   XLSX.writeFile(wb, "기체실험결과_보일샤를_학번이름.xlsx");
+  alert("✅ 엑셀 파일이 다운로드되었습니다!");
 }

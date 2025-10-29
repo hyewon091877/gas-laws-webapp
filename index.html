@@ -8,13 +8,12 @@
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- html2canvas + jsPDF -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- XLSX (한 번만 로드) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <header>
-    <h1>기체의 성질 학습실</h1>
+    <h1>⚗️ 기체의 성질 학습실</h1>
     <p>보일의 법칙 · 샤를의 법칙 · 형성평가</p>
   </header>
 
@@ -25,32 +24,61 @@
   </nav>
 
   <main>
+    <!-- 🔹 보일의 법칙 -->
     <section id="boyle" class="tab active">
-      <h2>보일의 법칙</h2>
-      <p>온도가 일정할 때 압력(P)과 부피(V)의 관계를 나타냅니다.<br>
+      <h2>보일의 법칙 (Boyle's Law)</h2>
+      <p>온도가 일정할 때 <strong>압력(P)과 부피(V)의 관계</strong>를 나타냅니다.<br>
       P × V = 일정</p>
+
+      <div class="control-panel">
+        <label>압력 (atm): <span id="pressureValue">1.0</span></label>
+        <input type="range" id="pressure" min="0.5" max="5" step="0.1" value="1">
+        
+        <label>부피 (L): <span id="volumeValue">100.0</span></label>
+      </div>
+
+      <div class="balloon">
+        <svg id="boyleBalloonSVG" width="150" height="150" viewBox="0 0 100 100">
+          <ellipse cx="50" cy="50" rx="30" ry="40" fill="#4a90e2"/>
+        </svg>
+      </div>
+
       <canvas id="boyleChart" width="400" height="300"></canvas>
-      <button id="saveBoyleExcel">📊 그래프 엑셀로 저장</button>
-      <button id="saveExcelBtn" onclick="exportToExcel()">📊 결과 엑셀로 저장</button>
+      <button id="saveExcelBtn" onclick="exportToExcel()">📊 실험 결과 엑셀로 저장</button>
     </section>
 
+    <!-- 🔹 샤를의 법칙 -->
     <section id="charles" class="tab">
-      <h2>샤를의 법칙</h2>
-      <p>압력이 일정할 때 부피(V)는 절대온도(T)에 비례합니다.<br>
-      V ∝ T → 섭씨온도일 때 Vt = V₀(1 + t/273)</p>
-      <canvas id="charlesChart" width="400" height="300"></canvas>
-      <button id="saveCharlesExcel">📊 그래프 엑셀로 저장</button>
-      <button id="saveExcelBtn" onclick="exportToExcel()">📊 결과 엑셀로 저장</button>
+      <h2>샤를의 법칙 (Charles's Law)</h2>
+      <p>압력이 일정할 때 <strong>부피(V)는 절대온도(T)에 비례</strong>합니다.<br>
+      V ∝ T → 섭씨온도일 때 V<sub>t</sub> = V₀(1 + t/273)</p>
+
+      <div class="control-panel">
+        <label>온도 (°C): <span id="tempValue">0</span></label>
+        <input type="range" id="temperature" min="0" max="100" step="1" value="0">
+        
+        <label>부피 (L): <span id="charleVolumeValue">50.0</span></label>
+      </div>
+
+      <div class="balloon">
+        <svg id="charleBalloonSVG" width="150" height="150" viewBox="0 0 100 100">
+          <ellipse cx="50" cy="50" rx="30" ry="40" fill="#4a90e2"/>
+        </svg>
+      </div>
+
+      <canvas id="charleChart" width="400" height="300"></canvas>
+      <button id="saveExcelBtn2" onclick="exportToExcel()">📊 실험 결과 엑셀로 저장</button>
     </section>
 
+    <!-- 🔹 퀴즈 -->
     <section id="quiz" class="tab">
       <h2>기체의 성질 퀴즈 🧠</h2>
       <div id="quizBox"></div>
-      <button id="nextBtn">다음 문제</button>
       <p id="feedback"></p>
+      <button id="nextBtn">다음 문제</button>
 
       <div id="resultSection" style="display:none;">
-        <h3>결과 그래프</h3>
+        <h3>✅ 퀴즈 결과</h3>
         <canvas id="resultChart"></canvas>
         <button id="saveResultBtn">📸 결과 이미지/PDF로 저장</button>
       </div>
@@ -63,6 +91,6 @@
 
   <script src="app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </body>
 </html>
