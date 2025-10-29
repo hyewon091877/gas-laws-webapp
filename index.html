@@ -3,61 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>기체의 성질 탐험하기 🚀</title>
+  <title>기체의 성질 학습실</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- html2canvas + jsPDF -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </head>
 <body>
   <header>
-    <h1>기체의 성질 탐험하기 🚀</h1>
-    <nav>
-      <button class="tab-btn" data-tab="boyle">보일의 법칙</button>
-      <button class="tab-btn" data-tab="charle">샤를의 법칙</button>
-      <button class="tab-btn" data-tab="quiz">퀴즈</button>
-    </nav>
+    <h1>기체의 성질 학습실</h1>
+    <p>보일의 법칙 · 샤를의 법칙 · 형성평가</p>
   </header>
 
+  <nav>
+    <button class="tab-btn active" data-tab="boyle">보일의 법칙</button>
+    <button class="tab-btn" data-tab="charles">샤를의 법칙</button>
+    <button class="tab-btn" data-tab="quiz">퀴즈</button>
+  </nav>
+
   <main>
-    <!-- 보일의 법칙 탭 -->
     <section id="boyle" class="tab active">
-      <h2>보일의 법칙 (P × V = 일정)</h2>
-      <label>압력 (P): </label>
-      <input type="range" id="pressure" min="1" max="5" step="0.1" value="1">
-      <span id="pressureValue">1</span> atm
-      <p>부피(V): <span id="volumeValue">100</span> L</p>
-      <div class="balloon" id="balloonBoyle">
-       <svg id="boyleBalloonSVG" viewBox="0 0 100 160" width="120">
-        <ellipse cx="50" cy="60" rx="35" ry="45" fill="#ff6666" />
-        <rect x="45" y="105" width="10" height="15" fill="#cc3333" />
-        <line x1="50" y1="120" x2="50" y2="150" stroke="#555" stroke-width="2"/>
-       </svg>
-      </div>
-      <canvas id="boyleChart"></canvas>
+      <h2>보일의 법칙</h2>
+      <p>온도가 일정할 때 압력(P)과 부피(V)의 관계를 나타냅니다.<br>
+      P × V = 일정</p>
+      <canvas id="boyleChart" width="400" height="300"></canvas>
+      <button id="saveBoyleExcel">📊 그래프 엑셀로 저장</button>
     </section>
 
-    <!-- 샤를의 법칙 탭 -->
-    <section id="charle" class="tab">
-      <h2>샤를의 법칙 (V / T = 일정)</h2>
-      <label>온도 (°C): </label>
-      <input type="range" id="temperature" min="0" max="100" step="5" value="20">
-      <span id="tempValue">20</span> °C
-      <p>부피(V): <span id="charleVolumeValue">50</span> L</p>
-      <div class="balloon" id="balloonCharle">
-        <svg id="charleBalloonSVG" viewBox="0 0 100 160" width="120">
-            <ellipse cx="50" cy="60" rx="35" ry="45" fill="#66ccff" />
-            <rect x="45" y="105" width="10" height="15" fill="#3399cc" />
-            <line x1="50" y1="120" x2="50" y2="150" stroke="#555" stroke-width="2"/>
-        </svg>
-      </div>
-      <canvas id="charleChart"></canvas>
+    <section id="charles" class="tab">
+      <h2>샤를의 법칙</h2>
+      <p>압력이 일정할 때 부피(V)는 절대온도(T)에 비례합니다.<br>
+      V ∝ T → 섭씨온도일 때 Vt = V₀(1 + t/273)</p>
+      <canvas id="charlesChart" width="400" height="300"></canvas>
+      <button id="saveCharlesExcel">📊 그래프 엑셀로 저장</button>
     </section>
 
-    <!-- 퀴즈 탭 -->
     <section id="quiz" class="tab">
       <h2>기체의 성질 퀴즈 🧠</h2>
       <div id="quizBox"></div>
       <button id="nextBtn">다음 문제</button>
       <p id="feedback"></p>
+
+      <div id="resultSection" style="display:none;">
+        <h3>결과 그래프</h3>
+        <canvas id="resultChart"></canvas>
+        <button id="saveResultBtn">📸 결과 이미지/PDF로 저장</button>
+      </div>
     </section>
   </main>
 
