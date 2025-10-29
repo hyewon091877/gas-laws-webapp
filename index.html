@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기체의 성질 탐험하기 🚀</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>기체의 성질 탐험하기 🚀</h1>
+    <nav>
+      <button class="tab-btn" data-tab="boyle">보일의 법칙</button>
+      <button class="tab-btn" data-tab="charle">샤를의 법칙</button>
+      <button class="tab-btn" data-tab="quiz">퀴즈</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 보일의 법칙 탭 -->
+    <section id="boyle" class="tab active">
+      <h2>보일의 법칙 (P × V = 일정)</h2>
+      <label>압력 (P): </label>
+      <input type="range" id="pressure" min="1" max="5" step="0.1" value="1">
+      <span id="pressureValue">1</span> atm
+      <p>부피(V): <span id="volumeValue">100</span> L</p>
+      <div class="balloon"><img id="balloonBoyle" src="assets/balloon.png" alt="풍선"></div>
+      <canvas id="boyleChart"></canvas>
+    </section>
+
+    <!-- 샤를의 법칙 탭 -->
+    <section id="charle" class="tab">
+      <h2>샤를의 법칙 (V / T = 일정)</h2>
+      <label>온도 (°C): </label>
+      <input type="range" id="temperature" min="0" max="100" step="5" value="20">
+      <span id="tempValue">20</span> °C
+      <p>부피(V): <span id="charleVolumeValue">50</span> L</p>
+      <div class="balloon"><img id="balloonCharle" src="assets/balloon.png" alt="풍선"></div>
+      <canvas id="charleChart"></canvas>
+    </section>
+
+    <!-- 퀴즈 탭 -->
+    <section id="quiz" class="tab">
+      <h2>기체의 성질 퀴즈 🧠</h2>
+      <div id="quizBox"></div>
+      <button id="nextBtn">다음 문제</button>
+      <p id="feedback"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 기체의 성질 학습 실험실</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

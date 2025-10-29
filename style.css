@@ -1,0 +1,48 @@
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  text-align: center;
+  background: #f5f7fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #007bff;
+  color: white;
+  padding: 10px;
+}
+
+nav button {
+  margin: 5px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  background: white;
+  color: #007bff;
+  cursor: pointer;
+}
+
+nav button:hover {
+  background: #e6f0ff;
+}
+
+.tab {
+  display: none;
+  margin: 30px auto;
+  width: 80%;
+}
+
+.tab.active {
+  display: block;
+}
+
+.balloon img {
+  width: 150px;
+  transition: transform 0.5s ease;
+}
+
+#feedback {
+  font-weight: bold;
+  margin-top: 15px;
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gas-laws-webapp",
+  "version": "2.0.0",
+  "description": "보일의 법칙, 샤를의 법칙, 퀴즈를 포함한 중학교 1학년용 기체 시각화 웹앱",
+  "main": "app.js",
+  "scripts": {
+    "start": "live-server"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0"
+  }
+}
