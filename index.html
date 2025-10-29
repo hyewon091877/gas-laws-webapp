@@ -17,6 +17,19 @@
     <p>보일의 법칙 · 샤를의 법칙 · 형성평가</p>
   </header>
 
+  <!-- 학생 정보 입력 모달 -->
+  <div id="studentModal" class="modal">
+    <div class="modal-content">
+      <h2>👋 환영합니다!</h2>
+      <p>실험을 시작하기 전에 정보를 입력해주세요</p>
+      <input type="text" id="studentGrade" placeholder="학년 (예: 1)" maxlength="1">
+      <input type="text" id="studentClass" placeholder="반 (예: 3)" maxlength="2">
+      <input type="text" id="studentNumber" placeholder="번호 (예: 15)" maxlength="2">
+      <input type="text" id="studentName" placeholder="이름 (예: 김철수)">
+      <button id="startBtn">실험 시작하기 🚀</button>
+    </div>
+  </div>
+
   <nav>
     <button class="tab-btn active" data-tab="boyle">보일의 법칙</button>
     <button class="tab-btn" data-tab="charles">샤를의 법칙</button>
@@ -27,8 +40,20 @@
     <!-- 🔹 보일의 법칙 -->
     <section id="boyle" class="tab active">
       <h2>보일의 법칙 (Boyle's Law)</h2>
-      <p>온도가 일정할 때 <strong>압력(P)과 부피(V)의 관계</strong>를 나타냅니다.<br>
-      P × V = 일정</p>
+      
+      <div class="info-box">
+        <h3>📚 개념 설명</h3>
+        <p><strong>온도가 일정</strong>할 때, 기체의 <strong>압력(P)과 부피(V)는 반비례</strong>합니다.</p>
+        <p class="formula">P × V = 일정 (k)</p>
+        <div class="real-life">
+          <h4>🌟 실생활 예시</h4>
+          <ul>
+            <li>🎈 풍선을 누르면 부피가 줄어들고 압력이 높아집니다</li>
+            <li>💉 주사기 피스톤을 누르면 공기가 압축됩니다</li>
+            <li>🤿 잠수할 때 수압이 높아지면 폐의 부피가 줄어듭니다</li>
+          </ul>
+        </div>
+      </div>
 
       <div class="control-panel">
         <label>압력 (atm): <span id="pressureValue">1.0</span></label>
@@ -44,14 +69,31 @@
       </div>
 
       <canvas id="boyleChart" width="400" height="300"></canvas>
-      <button id="saveExcelBtn" onclick="exportToExcel()">📊 실험 결과 엑셀로 저장</button>
+      
+      <div class="button-group">
+        <button class="reset-btn" onclick="resetBoyle()">🔄 초기화</button>
+        <button class="save-btn" onclick="exportToExcel()">📊 실험 결과 저장</button>
+      </div>
     </section>
 
     <!-- 🔹 샤를의 법칙 -->
     <section id="charles" class="tab">
       <h2>샤를의 법칙 (Charles's Law)</h2>
-      <p>압력이 일정할 때 <strong>부피(V)는 절대온도(T)에 비례</strong>합니다.<br>
-      V ∝ T → 섭씨온도일 때 V<sub>t</sub> = V₀(1 + t/273)</p>
+      
+      <div class="info-box">
+        <h3>📚 개념 설명</h3>
+        <p><strong>압력이 일정</strong>할 때, 기체의 <strong>부피(V)는 절대온도(T)에 비례</strong>합니다.</p>
+        <p class="formula">V ∝ T 또는 V/T = 일정</p>
+        <p class="sub-formula">섭씨온도일 때: V<sub>t</sub> = V₀(1 + t/273)</p>
+        <div class="real-life">
+          <h4>🌟 실생활 예시</h4>
+          <ul>
+            <li>🎈 더운 여름날 풍선이 부풀어 오릅니다</li>
+            <li>🔥 뜨거운 공기는 팽창해서 열기구가 뜹니다</li>
+            <li>❄️ 겨울철 타이어 공기압이 낮아집니다</li>
+          </ul>
+        </div>
+      </div>
 
       <div class="control-panel">
         <label>온도 (°C): <span id="tempValue">0</span></label>
@@ -67,12 +109,18 @@
       </div>
 
       <canvas id="charleChart" width="400" height="300"></canvas>
-      <button id="saveExcelBtn2" onclick="exportToExcel()">📊 실험 결과 엑셀로 저장</button>
+      
+      <div class="button-group">
+        <button class="reset-btn" onclick="resetCharles()">🔄 초기화</button>
+        <button class="save-btn" onclick="exportToExcel()">📊 실험 결과 저장</button>
+      </div>
     </section>
 
     <!-- 🔹 퀴즈 -->
     <section id="quiz" class="tab">
       <h2>기체의 성질 퀴즈 🧠</h2>
+      <p class="quiz-intro">배운 내용을 확인해볼까요? 총 5문제가 출제됩니다!</p>
+      
       <div id="quizBox"></div>
       <p id="feedback"></p>
       <button id="nextBtn">다음 문제</button>
@@ -80,13 +128,16 @@
       <div id="resultSection" style="display:none;">
         <h3>✅ 퀴즈 결과</h3>
         <canvas id="resultChart"></canvas>
-        <button id="saveResultBtn">📸 결과 이미지/PDF로 저장</button>
+        <div class="button-group">
+          <button class="save-btn" id="saveResultBtn">📸 결과 이미지/PDF로 저장</button>
+          <button class="reset-btn" onclick="resetQuiz()">🔄 퀴즈 다시하기</button>
+        </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>© 2025 기체의 성질 학습 실험실</p>
+    <p>© 2025 기체의 성질 학습 실험실 | 중학교 1학년 과학</p>
   </footer>
 
   <script src="app.js"></script>

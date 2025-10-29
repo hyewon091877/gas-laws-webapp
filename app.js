@@ -1,14 +1,55 @@
+// 학생 정보 전역 변수
+let studentInfo = {
+  grade: '',
+  class: '',
+  number: '',
+  name: ''
+};
+
+// 🔹 페이지 로드 시 학생 정보 모달 표시
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById('studentModal').style.display = 'flex';
+  
+  // 엔터키로도 시작 가능
+  const inputs = document.querySelectorAll('#studentModal input');
+  inputs.forEach(input => {
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('startBtn').click();
+      }
+    });
+  });
+});
+
+// 🔹 학생 정보 저장 및 실험 시작
+document.getElementById('startBtn').addEventListener('click', () => {
+  const grade = document.getElementById('studentGrade').value.trim();
+  const classNum = document.getElementById('studentClass').value.trim();
+  const number = document.getElementById('studentNumber').value.trim();
+  const name = document.getElementById('studentName').value.trim();
+
+  if (!grade || !classNum || !number || !name) {
+    alert('⚠️ 모든 정보를 입력해주세요!');
+    return;
+  }
+
+  studentInfo = { grade, class: classNum, number, name };
+  document.getElementById('studentModal').style.display = 'none';
+  
+  // 퀴즈 첫 문제 로드
+  showQuiz();
+  document.getElementById('nextBtn').disabled = true;
+});
+
 // 🔹 탭 전환 기능
 const tabButtons = document.querySelectorAll('.tab-btn');
 const tabs = document.querySelectorAll('.tab');
 
 tabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
-    // 모든 탭 버튼과 탭 비활성화
     tabButtons.forEach(b => b.classList.remove('active'));
     tabs.forEach(t => t.classList.remove('active'));
     
-    // 선택한 탭만 활성화
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
   });
@@ -31,17 +72,26 @@ const boyleChart = new Chart(ctx1, {
       data: [], 
       borderColor: '#007bff',
       backgroundColor: 'rgba(0, 123, 255, 0.1)',
-      tension: 0.4
+      tension: 0.4,
+      pointRadius: 5,
+      pointHoverRadius: 7
     }] 
   },
   options: { 
     responsive: true,
     scales: { 
-      x: { title: { display: true, text: '압력 (atm)' } }, 
-      y: { title: { display: true, text: '부피 (L)' } } 
+      x: { title: { display: true, text: '압력 (atm)', font: { size: 14 } } }, 
+      y: { title: { display: true, text: '부피 (L)', font: { size: 14 } } } 
     },
     plugins: {
-      legend: { display: false }
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `부피: ${context.parsed.y.toFixed(1)}L`;
+          }
+        }
+      }
     }
   }
 });
@@ -52,16 +102,31 @@ pSlider.addEventListener('input', () => {
   pValue.textContent = P.toFixed(1);
   vValue.textContent = V.toFixed(1);
   
-  // 풍선 크기 조절
   boyleBalloon.style.transform = `scale(${V / 100})`;
   boyleBalloon.style.transformOrigin = 'center center';
 
-  // 그래프 업데이트
   boyleChart.data.labels.push(P.toFixed(1));
   boyleChart.data.datasets[0].data.push(V);
   recordBoyleData(P, V);
   boyleChart.update();
 });
+
+// 🔹 보일의 법칙 초기화
+function resetBoyle() {
+  if (confirm('🔄 실험 데이터를 초기화하시겠습니까?')) {
+    pSlider.value = 1;
+    pValue.textContent = '1.0';
+    vValue.textContent = '100.0';
+    boyleBalloon.style.transform = 'scale(1)';
+    
+    boyleChart.data.labels = [];
+    boyleChart.data.datasets[0].data = [];
+    boyleChart.update();
+    
+    // 보일의 법칙 데이터만 초기화
+    results = results.filter(r => r.law !== "보일의 법칙");
+  }
+}
 
 // 🔹 샤를의 법칙
 const tSlider = document.getElementById('temperature');
@@ -69,7 +134,6 @@ const tValue = document.getElementById('tempValue');
 const vCharle = document.getElementById('charleVolumeValue');
 const charleBalloon = document.getElementById('charleBalloonSVG');
 
-// 기준 부피 (0°C일 때)
 const V0 = 50;
 
 const ctx2 = document.getElementById('charleChart').getContext('2d');
@@ -83,48 +147,70 @@ const charleChart = new Chart(ctx2, {
       borderColor: '#ff6600',
       backgroundColor: 'rgba(255, 102, 0, 0.1)',
       borderWidth: 2,
-      tension: 0.4
+      tension: 0.4,
+      pointRadius: 5,
+      pointHoverRadius: 7
     }] 
   },
   options: { 
     responsive: true,
     scales: { 
-      x: { title: { display: true, text: '온도 (°C)' } }, 
-      y: { title: { display: true, text: '부피 (L)' } } 
+      x: { title: { display: true, text: '온도 (°C)', font: { size: 14 } } }, 
+      y: { title: { display: true, text: '부피 (L)', font: { size: 14 } } } 
     },
     plugins: {
-      legend: { display: false }
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `부피: ${context.parsed.y.toFixed(1)}L`;
+          }
+        }
+      }
     }
   }
 });
 
 tSlider.addEventListener('input', () => {
-  const t = parseFloat(tSlider.value);  // 섭씨 온도
-  const V = V0 * (1 + t / 273);         // 샤를의 법칙 실제 계산식
+  const t = parseFloat(tSlider.value);
+  const V = V0 * (1 + t / 273);
   tValue.textContent = t;
   vCharle.textContent = V.toFixed(1);
   
-  // 풍선 크기 조절
   charleBalloon.style.transform = `scale(${V / V0})`;
   charleBalloon.style.transformOrigin = 'center center';
   
-  // 풍선 색상 변경 (0°C 파랑 → 100°C 빨강)
   const ellipse = charleBalloon.querySelector('ellipse');
   const r = Math.round(255 * (t / 100));
   const g = Math.round(200 * (1 - t / 100));
   const b = Math.round(255 * (1 - t / 100));
   ellipse.setAttribute('fill', `rgb(${r},${g},${b})`);
   
-  // 그래프 업데이트
   charleChart.data.labels.push(t);
   charleChart.data.datasets[0].data.push(V);
-  recordCharleData(t, V);  // ✅ 수정: T → t
+  recordCharleData(t, V);
   charleChart.update();
 });
 
-// ----------------------------
-// 🎯 평가용 퀴즈 데이터 (15문항)
-// ----------------------------
+// 🔹 샤를의 법칙 초기화
+function resetCharles() {
+  if (confirm('🔄 실험 데이터를 초기화하시겠습니까?')) {
+    tSlider.value = 0;
+    tValue.textContent = '0';
+    vCharle.textContent = '50.0';
+    charleBalloon.style.transform = 'scale(1)';
+    charleBalloon.querySelector('ellipse').setAttribute('fill', '#4a90e2');
+    
+    charleChart.data.labels = [];
+    charleChart.data.datasets[0].data = [];
+    charleChart.update();
+    
+    // 샤를의 법칙 데이터만 초기화
+    results = results.filter(r => r.law !== "샤를의 법칙");
+  }
+}
+
+// 🔹 퀴즈 데이터
 const allQuestions = [
   { question: "보일의 법칙에서 압력이 두 배가 되면 부피는?", options: ["2배", "1/2배", "변화 없음", "4배"], answer: 1 },
   { question: "샤를의 법칙의 그래프 형태는?", options: ["직선", "곡선", "수평선", "사인파"], answer: 0 },
@@ -143,18 +229,12 @@ const allQuestions = [
   { question: "절대영도란?", options: ["온도가 0°C일 때", "분자 운동이 멈춘 온도", "기체 부피가 2배일 때", "압력이 0일 때"], answer: 1 }
 ];
 
-// ----------------------------
-// 📋 랜덤으로 5문제 선택
-// ----------------------------
-const quizData = allQuestions.sort(() => Math.random() - 0.5).slice(0, 5);
-
+let quizData = [];
 let currentQuiz = 0;
-let attempts = Array(quizData.length).fill(0);
+let attempts = [];
 let resultData = [];
 
-// ----------------------------
-// ⚙️ 문제 표시
-// ----------------------------
+// 🔹 퀴즈 시작
 function showQuiz() {
   const quiz = quizData[currentQuiz];
   const quizBox = document.getElementById('quizBox');
@@ -179,8 +259,6 @@ function checkAnswer(selected) {
     feedback.style.color = "#2d7a2d";
 
     resultData.push({ question: currentQuiz + 1, tries: attempts[currentQuiz] });
-    
-    // 정답 맞추면 다음 버튼 활성화
     document.getElementById('nextBtn').disabled = false;
   } else {
     feedback.textContent = "❌ 틀렸어요! 다시 도전해봐요 💪";
@@ -224,20 +302,35 @@ function showResultChart() {
   });
 }
 
-// 📸 퀴즈 결과 이미지 또는 PDF 저장
+// 🔹 퀴즈 초기화
+function resetQuiz() {
+  if (confirm('🔄 퀴즈를 처음부터 다시 시작하시겠습니까?')) {
+    quizData = allQuestions.sort(() => Math.random() - 0.5).slice(0, 5);
+    currentQuiz = 0;
+    attempts = Array(quizData.length).fill(0);
+    resultData = [];
+    
+    document.getElementById('resultSection').style.display = 'none';
+    document.getElementById('nextBtn').style.display = 'block';
+    document.getElementById('feedback').style.display = 'block';
+    document.getElementById('nextBtn').disabled = true;
+    
+    showQuiz();
+  }
+}
+
+// 📸 퀴즈 결과 저장
 document.getElementById("saveResultBtn").addEventListener("click", () => {
   const resultArea = document.getElementById("resultSection");
 
   html2canvas(resultArea).then(canvas => {
     const image = canvas.toDataURL("image/png");
 
-    // 이미지로 저장
     const link = document.createElement("a");
     link.href = image;
-    link.download = "quiz_result.png";
+    link.download = `퀴즈결과_${studentInfo.grade}학년${studentInfo.class}반${studentInfo.number}번_${studentInfo.name}.png`;
     link.click();
 
-    // PDF 저장 옵션
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({
       orientation: "portrait",
@@ -248,18 +341,11 @@ document.getElementById("saveResultBtn").addEventListener("click", () => {
     const imgWidth = 400;
     const imgHeight = canvas.height * imgWidth / canvas.width;
     pdf.addImage(image, "PNG", 20, 20, imgWidth, imgHeight);
-    pdf.save("quiz_result.pdf");
+    pdf.save(`퀴즈결과_${studentInfo.grade}학년${studentInfo.class}반${studentInfo.number}번_${studentInfo.name}.pdf`);
   });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  showQuiz(); // 첫 문제 자동 표시
-  document.getElementById('nextBtn').disabled = true; // 정답 맞추기 전까지 비활성화
-});
-
-// -------------------------------
-// 🧪 실험 결과 저장 기능
-// -------------------------------
+// 🧪 실험 결과 저장
 let results = [];
 
 function recordBoyleData(P, V) {
@@ -267,6 +353,7 @@ function recordBoyleData(P, V) {
     law: "보일의 법칙",
     pressure: P.toFixed(2),
     volume: V.toFixed(2),
+    temperature: "-",
     timestamp: new Date().toLocaleTimeString()
   });
 }
@@ -274,8 +361,9 @@ function recordBoyleData(P, V) {
 function recordCharleData(T, V) {
   results.push({
     law: "샤를의 법칙",
-    temperature: T,
+    pressure: "-",
     volume: V.toFixed(2),
+    temperature: T,
     timestamp: new Date().toLocaleTimeString()
   });
 }
@@ -286,10 +374,26 @@ function exportToExcel() {
     return;
   }
 
-  const ws = XLSX.utils.json_to_sheet(results);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Experiment Results");
+  // 학생 정보 시트
+  const studentSheet = XLSX.utils.json_to_sheet([{
+    "학년": studentInfo.grade,
+    "반": studentInfo.class,
+    "번호": studentInfo.number,
+    "이름": studentInfo.name,
+    "실험 일시": new Date().toLocaleString()
+  }]);
 
-  XLSX.writeFile(wb, "기체실험결과_보일샤를_학번이름.xlsx");
+  // 실험 데이터 시트
+  const dataSheet = XLSX.utils.json_to_sheet(results);
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, studentSheet, "학생정보");
+  XLSX.utils.book_append_sheet(wb, dataSheet, "실험결과");
+
+  XLSX.writeFile(wb, `기체실험_${studentInfo.grade}학년${studentInfo.class}반${studentInfo.number}번_${studentInfo.name}.xlsx`);
   alert("✅ 엑셀 파일이 다운로드되었습니다!");
 }
+
+// 초기화
+quizData = allQuestions.sort(() => Math.random() - 0.5).slice(0, 5);
+attempts = Array(quizData.length).fill(0);
