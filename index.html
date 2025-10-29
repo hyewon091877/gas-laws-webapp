@@ -9,8 +9,8 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- html2canvas + jsPDF -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <header>
@@ -31,6 +31,7 @@
       P × V = 일정</p>
       <canvas id="boyleChart" width="400" height="300"></canvas>
       <button id="saveBoyleExcel">📊 그래프 엑셀로 저장</button>
+      <button id="saveExcelBtn" onclick="exportToExcel()">📊 결과 엑셀로 저장</button>
     </section>
 
     <section id="charles" class="tab">
@@ -39,6 +40,7 @@
       V ∝ T → 섭씨온도일 때 Vt = V₀(1 + t/273)</p>
       <canvas id="charlesChart" width="400" height="300"></canvas>
       <button id="saveCharlesExcel">📊 그래프 엑셀로 저장</button>
+      <button id="saveExcelBtn" onclick="exportToExcel()">📊 결과 엑셀로 저장</button>
     </section>
 
     <section id="quiz" class="tab">
@@ -60,5 +62,7 @@
   </footer>
 
   <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </body>
 </html>

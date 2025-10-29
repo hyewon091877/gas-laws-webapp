@@ -144,3 +144,39 @@ footer {
   color: #555;
   opacity: 0.8;
 }
+
+#saveExcelBtn {
+  margin-top: 20px;
+  background: linear-gradient(90deg, #6a85b6, #bac8e0);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#saveExcelBtn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #5a75a0, #9eb6d6);
+}
+
+#resultSection {
+  margin-top: 30px;
+}
+
+#saveResultBtn {
+  margin-top: 15px;
+  background: linear-gradient(90deg, #6a85b6, #bac8e0);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#saveResultBtn:hover {
+  background: linear-gradient(90deg, #5a75a0, #9eb6d6);
+}

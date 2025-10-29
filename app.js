@@ -33,6 +33,7 @@ pSlider.addEventListener('input', () => {
 
   boyleChart.data.labels.push(P);
   boyleChart.data.datasets[0].data.push(V);
+  recordBoyleData(P, V);
   boyleChart.update();
 });
 
@@ -86,6 +87,7 @@ tSlider.addEventListener('input', () => {
   // 그래프 업데이트
   charleChart.data.labels.push(t);
   charleChart.data.datasets[0].data.push(V);
+  recordCharleData(T, V);
   charleChart.update();
 });
 
@@ -94,41 +96,166 @@ const quizBox = document.getElementById('quizBox');
 const feedback = document.getElementById('feedback');
 const nextBtn = document.getElementById('nextBtn');
 
-const quizData = [
-  { q: "보일의 법칙에서 일정한 것은?", options: ["온도", "압력", "부피", "온도와 압력"], answer: "온도", explain: "보일의 법칙에서는 온도가 일정합니다." },
-  { q: "샤를의 법칙에서 압력이 일정할 때, 온도가 올라가면 부피는?", options: ["작아진다", "변하지 않는다", "커진다", "없어진다"], answer: "커진다", explain: "온도가 높아질수록 기체의 부피가 커집니다." },
-  { q: "보일의 법칙의 식은?", options: ["P×V=일정", "V/T=일정", "P/T=일정", "V×T=일정"], answer: "P×V=일정", explain: "압력과 부피의 곱이 일정합니다." },
-  { q: "샤를의 법칙의 그래프는?", options: ["직선", "곡선", "점선", "없다"], answer: "직선", explain: "온도와 부피가 비례하므로 직선 그래프입니다." },
-  { q: "풍선이 추운 곳에서 작아지는 이유는?", options: ["보일의 법칙", "샤를의 법칙", "용해도 법칙", "기화 법칙"], answer: "샤를의 법칙", explain: "온도가 낮아지면 부피도 줄어드는 샤를의 법칙 때문입니다." }
+// ----------------------------
+// 🎯 평가용 퀴즈 데이터 (15문항)
+// ----------------------------
+const allQuestions = [
+  { question: "보일의 법칙에서 압력이 두 배가 되면 부피는?", options: ["2배", "1/2배", "변화 없음", "4배"], answer: 1 },
+  { question: "샤를의 법칙의 그래프 형태는?", options: ["직선", "곡선", "수평선", "사인파"], answer: 0 },
+  { question: "PV=일정 은 어떤 법칙?", options: ["보일의 법칙", "샤를의 법칙", "아보가드로 법칙", "기체 확산 법칙"], answer: 0 },
+  { question: "온도가 높을수록 기체 분자는?", options: ["느려진다", "빠르다", "변화 없음", "정지한다"], answer: 1 },
+  { question: "V∝T 은 어떤 법칙?", options: ["샤를의 법칙", "보일의 법칙", "아보가드로 법칙", "달톤의 법칙"], answer: 0 },
+  { question: "기체 압력이 일정할 때 부피는 온도에?", options: ["반비례", "비례", "무관", "감소"], answer: 1 },
+  { question: "보일의 법칙에서 P가 3배면 V는?", options: ["3배", "1/3배", "2배", "변화 없음"], answer: 1 },
+  { question: "샤를의 법칙에서 온도 0°C일 때 부피는?", options: ["0이 된다", "일정", "무한대", "줄어들다 멈춤"], answer: 0 },
+  { question: "기체 압력 단위는?", options: ["℃", "L", "Pa", "g"], answer: 2 },
+  { question: "온도 단위 변환시 절대온도는?", options: ["T=℃", "T=℃+273", "T=℃-273", "T=273-℃"], answer: 1 },
+  { question: "보일의 법칙 실험에서 주로 사용하는 기구는?", options: ["유리관", "피스톤 실린더", "온도계", "비커"], answer: 1 },
+  { question: "샤를의 법칙은 어떤 조건에서 성립?", options: ["압력 일정", "온도 일정", "부피 일정", "질량 일정"], answer: 0 },
+  { question: "기체가 팽창할 때 부피는?", options: ["작아진다", "커진다", "변화 없음", "없어진다"], answer: 1 },
+  { question: "기체 법칙의 공통점은?", options: ["온도 관련 없음", "압력·부피·온도 관계", "질량만 중요", "상태 변화 없음"], answer: 1 },
+  { question: "절대영도란?", options: ["온도가 0°C일 때", "분자 운동이 멈춘 온도", "기체 부피가 2배일 때", "압력이 0일 때"], answer: 1 }
 ];
 
-let currentQ = 0;
-loadQuiz();
+// ----------------------------
+// 📋 랜덤으로 5문제 선택
+// ----------------------------
+const quizData = allQuestions.sort(() => Math.random() - 0.5).slice(0, 5);
 
-function loadQuiz() {
-  const q = quizData[currentQ];
-  quizBox.innerHTML = `<h3>${q.q}</h3>` + q.options.map(opt => 
-    `<button class="optionBtn">${opt}</button>`).join("");
-  feedback.textContent = "";
-  const optionBtns = document.querySelectorAll('.optionBtn');
-  optionBtns.forEach(btn => {
-    btn.onclick = () => checkAnswer(btn.textContent);
-  });
+let currentQuiz = 0;
+let attempts = Array(quizData.length).fill(0);
+let resultData = [];
+
+// ----------------------------
+// ⚙️ 문제 표시
+// ----------------------------
+function showQuiz() {
+  const quiz = quizData[currentQuiz];
+  const quizBox = document.getElementById('quizBox');
+  quizBox.innerHTML = `
+    <div class="quiz-card">
+      <h3>문제 ${currentQuiz + 1}. ${quiz.question}</h3>
+      ${quiz.options.map((opt, i) => `
+        <button class="optionBtn" onclick="checkAnswer(${i})">${opt}</button>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('feedback').textContent = '';
 }
 
 function checkAnswer(selected) {
-  const correct = quizData[currentQ].answer;
-  if (selected === correct) {
-    feedback.style.color = "green";
-    feedback.textContent = "정답! 🎉 " + quizData[currentQ].explain;
+  const quiz = quizData[currentQuiz];
+  attempts[currentQuiz]++;
+
+  const feedback = document.getElementById('feedback');
+  if (selected === quiz.answer) {
+    feedback.textContent = `🎉 정답! (${attempts[currentQuiz]}번 만에 맞춤)`;
+    feedback.style.color = "#2d7a2d";
+
+    resultData.push({ question: currentQuiz + 1, tries: attempts[currentQuiz] });
   } else {
-    feedback.style.color = "red";
-    feedback.textContent = "다시 풀어봅시다!";
+    feedback.textContent = "틀렸어요! 다시 도전해봐요 💪";
+    feedback.style.color = "#c0392b";
   }
 }
 
-nextBtn.onclick = () => {
-  currentQ++;
-  if (currentQ < quizData.length) loadQuiz();
-  else feedback.textContent = "모든 문제를 풀었습니다! 잘했어요 👏";
-};
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (currentQuiz < quizData.length - 1) {
+    currentQuiz++;
+    showQuiz();
+  } else {
+    showResultChart();
+  }
+});
+
+function showResultChart() {
+  document.getElementById('quizBox').innerHTML = "<h3>모든 문제를 완료했습니다 👏</h3>";
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('resultSection').style.display = 'block';
+
+  const ctx = document.getElementById('resultChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: resultData.map(r => `문제 ${r.question}`),
+      datasets: [{
+        label: '정답까지 시도 횟수',
+        data: resultData.map(r => r.tries),
+        borderWidth: 1,
+        backgroundColor: '#6a85b6'
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+// 📸 퀴즈 결과 이미지 또는 PDF 저장
+document.getElementById("saveResultBtn").addEventListener("click", () => {
+  const resultArea = document.getElementById("resultSection");
+
+  html2canvas(resultArea).then(canvas => {
+    const image = canvas.toDataURL("image/png");
+
+    // 이미지로 저장
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "quiz_result.png";
+    link.click();
+
+    // PDF 저장 옵션
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: "a4"
+    });
+
+    const imgWidth = 400;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    pdf.addImage(image, "PNG", 20, 20, imgWidth, imgHeight);
+    pdf.save("quiz_result.pdf");
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  showQuiz(); // 첫 문제 자동 표시
+});
+
+// -------------------------------
+// 🧪 실험 결과 저장 기능 추가
+// -------------------------------
+let results = [];
+
+function recordBoyleData(P, V) {
+  results.push({
+    law: "Boyle",
+    pressure: P,
+    volume: V,
+    timestamp: new Date().toLocaleTimeString()
+  });
+}
+
+function recordCharleData(T, V) {
+  results.push({
+    law: "Charles",
+    temperature: T,
+    volume: V,
+    timestamp: new Date().toLocaleTimeString()
+  });
+}
+
+function exportToExcel() {
+  if (results.length === 0) {
+    alert("저장된 데이터가 없습니다!");
+    return;
+  }
+
+  const ws = XLSX.utils.json_to_sheet(results);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Experiment Results");
+
+  XLSX.writeFile(wb, "기체실험결과_보일샤를_학번이름.xlsx");
+}
