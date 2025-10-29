@@ -37,9 +37,9 @@ nav button:hover {
   display: block;
 }
 
-.balloon img {
-  width: 150px;
+.balloon svg {
   transition: transform 0.5s ease;
+  display: inline-block;
 }
 
 #feedback {

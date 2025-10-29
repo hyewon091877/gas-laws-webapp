@@ -25,7 +25,13 @@
       <input type="range" id="pressure" min="1" max="5" step="0.1" value="1">
       <span id="pressureValue">1</span> atm
       <p>부피(V): <span id="volumeValue">100</span> L</p>
-      <div class="balloon"><img id="balloonBoyle" src="assets/balloon.png" alt="풍선"></div>
+      <div class="balloon" id="balloonBoyle">
+       <svg id="boyleBalloonSVG" viewBox="0 0 100 160" width="120">
+        <ellipse cx="50" cy="60" rx="35" ry="45" fill="#ff6666" />
+        <rect x="45" y="105" width="10" height="15" fill="#cc3333" />
+        <line x1="50" y1="120" x2="50" y2="150" stroke="#555" stroke-width="2"/>
+       </svg>
+      </div>
       <canvas id="boyleChart"></canvas>
     </section>
 
@@ -36,7 +42,13 @@
       <input type="range" id="temperature" min="0" max="100" step="5" value="20">
       <span id="tempValue">20</span> °C
       <p>부피(V): <span id="charleVolumeValue">50</span> L</p>
-      <div class="balloon"><img id="balloonCharle" src="assets/balloon.png" alt="풍선"></div>
+      <div class="balloon" id="balloonCharle">
+        <svg id="charleBalloonSVG" viewBox="0 0 100 160" width="120">
+            <ellipse cx="50" cy="60" rx="35" ry="45" fill="#66ccff" />
+            <rect x="45" y="105" width="10" height="15" fill="#3399cc" />
+            <line x1="50" y1="120" x2="50" y2="150" stroke="#555" stroke-width="2"/>
+        </svg>
+      </div>
       <canvas id="charleChart"></canvas>
     </section>
 

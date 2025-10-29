@@ -13,7 +13,7 @@ tabButtons.forEach(btn => {
 const pSlider = document.getElementById('pressure');
 const pValue = document.getElementById('pressureValue');
 const vValue = document.getElementById('volumeValue');
-const balloonB = document.getElementById('balloonBoyle');
+const boyleBalloon = document.getElementById('boyleBalloonSVG');
 const boyleConst = 100;
 
 const ctx1 = document.getElementById('boyleChart').getContext('2d');
@@ -28,18 +28,21 @@ pSlider.addEventListener('input', () => {
   const V = boyleConst / P;
   pValue.textContent = P.toFixed(1);
   vValue.textContent = V.toFixed(1);
-  balloonB.style.transform = `scale(${V / 100})`;
+  // SVG 풍선 확대/축소
+  boyleBalloon.style.transform = `scale(${V / 100})`;
+  boyleBalloon.style.transformOrigin = 'center center';
 
   boyleChart.data.labels.push(P);
   boyleChart.data.datasets[0].data.push(V);
   boyleChart.update();
 });
 
+
 // 🔹 샤를의 법칙
 const tSlider = document.getElementById('temperature');
 const tValue = document.getElementById('tempValue');
 const vCharle = document.getElementById('charleVolumeValue');
-const balloonC = document.getElementById('balloonCharle');
+const charleBalloon = document.getElementById('charleBalloonSVG');
 
 const ctx2 = document.getElementById('charleChart').getContext('2d');
 const charleChart = new Chart(ctx2, {
@@ -50,10 +53,12 @@ const charleChart = new Chart(ctx2, {
 
 tSlider.addEventListener('input', () => {
   const T = parseFloat(tSlider.value);
-  const V = 0.5 * T + 30; // 단순 비례 예시
+  const V = 0.5 * T + 30;
   tValue.textContent = T;
   vCharle.textContent = V.toFixed(1);
-  balloonC.style.transform = `scale(${V / 50})`;
+  // SVG 풍선 확대/축소
+  charleBalloon.style.transform = `scale(${V / 50})`;
+  charleBalloon.style.transformOrigin = 'center center';
 
   charleChart.data.labels.push(T);
   charleChart.data.datasets[0].data.push(V);
